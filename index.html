@@ -21,48 +21,41 @@
       background: linear-gradient(-45deg, #ffe4e1, #b6fcd5, #d2f8ff, #ffd1ff);
       background-size: 400% 400%;
       color: var(--text-light);
-     animation: lightGradient 15s ease infinite;
+      animation: lightGradient 15s ease infinite;
     }
 
-body.dark {
-  background: radial-gradient(circle at center, #1a1a2e, #16213e, #0f3460, #000000);
-  background-size: 600% 600%;
-  color: var(--text-dark);
-  animation: galaxyMove 30s ease infinite;
-  position: relative;
-  overflow: hidden;
-}
+    body.dark {
+      background: radial-gradient(circle at center, #1a1a2e, #16213e, #0f3460, #000000);
+      background-size: 600% 600%;
+      color: var(--text-dark);
+      animation: galaxyMove 30s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
 
+    @keyframes lightGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
 
-  @keyframes lightGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}@keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
-}
-
-    
     header {
       text-align: center;
       padding: 2rem 1rem 1rem;
       position: relative;
     }
-#logo {
-  width: 140px;
-  height: auto;
-  margin-bottom: 1rem;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 0px rgba(0, 0, 0, 0.0);
-}
-
-
-
-
-
-
+    #logo {
+      width: 140px;
+      height: auto;
+      margin-bottom: 1rem;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 0px rgba(0, 0, 0, 0.0);
+    }
 
     .theme-toggle, .auth-toggle, .language-select {
       position: absolute;
@@ -133,6 +126,7 @@ body.dark {
       background: rgba(255,255,255,0.2);
     }
 
+    /* بخش سبد خرید */
     .cart-box {
       display: none;
       position: fixed;
@@ -144,6 +138,25 @@ body.dark {
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
       z-index: 2000;
+      max-width: 320px;
+      font-family: Tahoma, sans-serif;
+    }
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+    }
+    .quantity-controls button {
+      width: 28px;
+      height: 28px;
+      font-size: 20px;
+      cursor: pointer;
+      margin: 0 5px;
     }
 
     main {
@@ -171,11 +184,18 @@ body.dark {
       color: inherit;
     }
   </style>
+  <!-- ایمیل جی‌اس -->
+  <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("your_user_id"); // به جای your_user_id، شناسه کاربری EmailJS خودت رو بذار
+    })();
+  </script>
 </head>
 <body class="light">
 
   <header>
-<img id="logo" src="logohomecontrol.png" alt="لوگو پروژه" />
+    <img id="logo" src="logohomecontrol.png" alt="لوگو پروژه" />
     <h1>خانه هوشمند با ESP32</h1>
     <p>ابتدا از طریق🔐وارد شوید</p>
     <button class="theme-toggle" id="themeBtn">🌙</button>
@@ -195,8 +215,11 @@ body.dark {
     <a href="#" id="log-list" style="display:none" onclick="showUsers()">👁️ مشاهده کاربران</a>
   </div>
 
+  <!-- بخش سبد خرید کامل -->
   <div class="cart-box" id="cart">
-    برای خرید به <b>ticketsuuporting@gmail.com</b> پیام دهید.
+    <h3>لیست محصولات فروشگاه</h3>
+    <div id="products-list"></div>
+    <button id="submitOrderBtn">ثبت سفارش</button>
   </div>
 
   <main>
@@ -220,17 +243,28 @@ body.dark {
   let userLogged = false;
   let currentUser = null;
 
+  // لیست محصولات فروشگاه
+  const products = [
+    { id: 1, name: "کیت هوشمندسازی پارسیان" }
+  ];
+
+  const maxQuantity = 4;  // حداکثر تعداد هر محصول
+  const cartState = {};   // ذخیره تعداد محصولات در سبد خرید
+
+  // چک کاربر پارسا
   function isParsa(user) {
     return user?.name?.toLowerCase() === "parsa" &&
            user?.email?.toLowerCase() === "parsasoorme138700@gmail.com";
   }
 
+  // نمایش یا پنهان کردن تم
   themeBtn.onclick = () => {
     body.classList.toggle("dark");
     body.classList.toggle("light");
     themeBtn.textContent = body.classList.contains("dark") ? "☀️" : "🌙";
   };
 
+  // باز و بسته کردن منو
   function toggleMenu() {
     if (!userLogged) {
       alert("ابتدا وارد یا ثبت‌نام کنید");
@@ -239,49 +273,49 @@ body.dark {
     menu.classList.toggle("open");
   }
 
+  // ورود کاربر
   function showLogin() {
-  const name = prompt("نام خود را وارد کنید:");
-  const email = prompt("ایمیل خود را وارد کنید:");
+    const name = prompt("نام خود را وارد کنید:");
+    const email = prompt("ایمیل خود را وارد کنید:");
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email)) {
-    alert("لطفاً یک ایمیل معتبر وارد کنید (مثال: user@example.com)");
-    return;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      alert("لطفاً یک ایمیل معتبر وارد کنید (مثال: user@example.com)");
+      return;
+    }
+
+    if (name && email) {
+      const time = new Date().toLocaleString("fa-IR");
+      const newUser = { name, email, time };
+      let users = JSON.parse(localStorage.getItem("users") || "[]");
+
+      const exists = users.some(u => u.email.toLowerCase() === email.toLowerCase() && u.name.toLowerCase() === name.toLowerCase());
+      if (!exists) {
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
+      }
+
+      localStorage.setItem("user", JSON.stringify(newUser));
+      userLogged = true;
+      currentUser = newUser;
+
+      alert("خوش آمدی " + name);
+      menu.style.display = "block";
+      menuToggle.style.display = "inline-block";
+
+      if (isParsa(newUser)) {
+        logList.style.display = "block";
+      } else {
+        logList.style.display = "none";
+      }
+
+      if (content.innerHTML.includes("لیست کاربران وارد شده")) {
+        showUsers();
+      }
+    }
   }
 
-  if (name && email) {
-    const time = new Date().toLocaleString("fa-IR");
-    const newUser = { name, email, time };
-    let users = JSON.parse(localStorage.getItem("users") || "[]");
-
-    const exists = users.some(u => u.email.toLowerCase() === email.toLowerCase() && u.name.toLowerCase() === name.toLowerCase());
-    if (!exists) {
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-    }
-
-    localStorage.setItem("user", JSON.stringify(newUser));
-    userLogged = true;
-    currentUser = newUser;
-
-    alert("خوش آمدی " + name);
-    menu.style.display = "block";
-    menuToggle.style.display = "inline-block";
-
-    if (isParsa(newUser)) {
-      logList.style.display = "block";
-    } else {
-      logList.style.display = "none";
-    }
-
-    // اگر الان صفحه لیست کاربران باز است، آن را رفرش کن
-    if (content.innerHTML.includes("لیست کاربران وارد شده")) {
-      showUsers();
-    }
-  }
-}
-
-
+  // نمایش لیست کاربران (برای parsa)
   function showUsers() {
     if (!(userLogged && isParsa(currentUser))) return;
 
@@ -301,6 +335,7 @@ body.dark {
     content.innerHTML = html;
   }
 
+  // بارگذاری محتوا در صفحه اصلی
   function loadContent(type) {
     menu.classList.remove("open");
     if (type === 'about') {
@@ -310,6 +345,7 @@ body.dark {
     }
   }
 
+  // باز و بسته کردن سبد خرید
   function openCart() {
     if (!userLogged) {
       alert("ابتدا وارد یا ثبت‌نام کنید");
@@ -318,6 +354,93 @@ body.dark {
     cart.classList.toggle("show");
   }
 
+  // نمایش محصولات در سبد خرید
+  function renderProducts() {
+    productsList.innerHTML = "";
+    products.forEach(product => {
+      if (!(product.id in cartState)) cartState[product.id] = 0;
+
+      const div = document.createElement("div");
+      div.className = "product-item";
+      div.innerHTML = `
+        <span>${product.name}</span>
+        <div class="quantity-controls">
+          <button onclick="decrement(${product.id})">-</button>
+          <span id="qty-${product.id}">${cartState[product.id]}</span>
+          <button onclick="increment(${product.id})">+</button>
+        </div>
+      `;
+      productsList.appendChild(div);
+    });
+  }
+
+  // افزایش تعداد
+  function increment(productId) {
+    if (cartState[productId] < maxQuantity) {
+      cartState[productId]++;
+      document.getElementById(`qty-${productId}`).textContent = cartState[productId];
+    } else {
+      alert("شما نمی‌توانید بیش از ۴ عدد سفارش دهید.");
+    }
+  }
+
+  // کاهش تعداد
+  function decrement(productId) {
+    if (cartState[productId] > 0) {
+      cartState[productId]--;
+      document.getElementById(`qty-${productId}`).textContent = cartState[productId];
+    }
+  }
+
+  // ساخت شماره تیکت رندوم 6 رقمی
+  function generateTicket() {
+    return 'TICKET-' + Math.floor(100000 + Math.random() * 900000);
+  }
+
+  // ارسال ایمیل سفارش (با EmailJS)
+  function sendEmail(ticketId, orderDetails, userEmail) {
+    emailjs.send("your_service_id", "your_template_id", {
+      ticket_id: ticketId,
+      order: orderDetails,
+      user_email: userEmail
+    })
+    .then(() => {
+      alert("سفارش شما ثبت شد! شماره تیکت شما: " + ticketId);
+      // خالی کردن سبد خرید
+      for (const pid in cartState) cartState[pid] = 0;
+      renderProducts();
+      cart.classList.remove("show");
+    })
+    .catch(err => {
+      alert("خطا در ارسال سفارش، دوباره تلاش کنید.");
+      console.error(err);
+    });
+  }
+
+  // کلیک ثبت سفارش
+  submitOrderBtn.onclick = () => {
+    if (!userLogged || !currentUser) {
+      alert("لطفاً ابتدا وارد شوید.");
+      return;
+    }
+
+    const orderItems = products
+      .filter(p => cartState[p.id] > 0)
+      .map(p => `${p.name} — تعداد: ${cartState[p.id]}`);
+
+    if (orderItems.length === 0) {
+      alert("لطفاً حداقل یک محصول را انتخاب کنید.");
+      return;
+    }
+
+    const ticketId = generateTicket();
+    const orderDetails = orderItems.join("\n");
+    const userEmail = currentUser.email;
+
+    sendEmail(ticketId, orderDetails, userEmail);
+  };
+
+  // هنگام بارگذاری صفحه
   window.onload = () => {
     const saved = JSON.parse(localStorage.getItem("user") || "null");
     if (saved) {
@@ -325,10 +448,4 @@ body.dark {
       currentUser = saved;
       menu.style.display = "block";
       menuToggle.style.display = "inline-block";
-      logList.style.display = isParsa(saved) ? "block" : "none";
-    }
-  };
-</script>
-
-</body>
-</html>
+      logList.style.display = isParsa(saved) ? "block"
