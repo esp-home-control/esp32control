@@ -214,6 +214,7 @@ body.dark {
     const menu = document.getElementById("menu");
     const content = document.getElementById("content");
     const cart = document.getElementById("cart");
+    const isAdmin = (currentUser && currentUser.name.toLowerCase() === "parsa" && currentUser.email.toLowerCase() === "parsasoorme138700@gmail.com");
     const logList = document.getElementById("log-list");
     const menuToggle = document.getElementById("menuToggle");
 
@@ -236,6 +237,26 @@ body.dark {
 function showLogin() {
   const name = prompt("نام خود را وارد کنید:");
   const email = prompt("ایمیل خود را وارد کنید:");
+function showUsers() {
+  if (!isAdmin) return;
+
+  const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+  // فیلتر کردن کاربران بجز admin
+  const filteredUsers = users.filter(u => !(u.name.toLowerCase() === "parsa" && u.email.toLowerCase() === "parsasoorme138700@gmail.com"));
+
+  if (filteredUsers.length === 0) {
+    content.innerHTML = "<p>هیچ کاربری هنوز ثبت‌نام نکرده است.</p>";
+    return;
+  }
+
+  let html = '<h2>لیست کاربران وارد شده:</h2><ul>';
+  filteredUsers.forEach(u => {
+    html += `<li>${u.name} - ${u.email} - ${u.time}</li>`;
+  });
+  html += '</ul>';
+  content.innerHTML = html;
+}
 
   // بررسی ایمیل معتبر:
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
