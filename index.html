@@ -38,6 +38,7 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
     @keyframes twinkle {
       0%, 100% { opacity: 0.3; }
       50% { opacity: 0.6; }
@@ -141,6 +142,9 @@
       max-width: 320px;
       font-family: Tahoma, sans-serif;
     }
+    .cart-box.show {
+      display: block !important;
+    }
     .product-item {
       display: flex;
       justify-content: space-between;
@@ -239,6 +243,8 @@
   const cart = document.getElementById("cart");
   const logList = document.getElementById("log-list");
   const menuToggle = document.getElementById("menuToggle");
+  const productsList = document.getElementById("products-list");
+  const submitOrderBtn = document.getElementById("submitOrderBtn");
 
   let userLogged = false;
   let currentUser = null;
@@ -352,6 +358,9 @@
       return;
     }
     cart.classList.toggle("show");
+    if(cart.classList.contains("show")) {
+      renderProducts(); // وقتی سبد باز می‌شود محصولات را رندر کن
+    }
   }
 
   // نمایش محصولات در سبد خرید
@@ -440,7 +449,7 @@
     sendEmail(ticketId, orderDetails, userEmail);
   };
 
-  // هنگام بارگذاری صفحه
+  // بارگذاری اولیه صفحه
   window.onload = () => {
     const saved = JSON.parse(localStorage.getItem("user") || "null");
     if (saved) {
@@ -448,4 +457,11 @@
       currentUser = saved;
       menu.style.display = "block";
       menuToggle.style.display = "inline-block";
-      logList.style.display = isParsa(saved) ? "block"
+      logList.style.display = isParsa(saved) ? "block" : "none";
+    }
+    renderProducts();
+  };
+</script>
+
+</body>
+</html>
