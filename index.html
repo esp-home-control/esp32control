@@ -21,46 +21,50 @@
       background: linear-gradient(-45deg, #ffe4e1, #b6fcd5, #d2f8ff, #ffd1ff);
       background-size: 400% 400%;
       color: var(--text-light);
-      animation: lightGradient 15s ease infinite;
+     animation: lightGradient 15s ease infinite;
     }
 
-    body.dark {
-      background: radial-gradient(circle at center, #1a1a2e, #16213e, #0f3460, #000000);
-      background-size: 600% 600%;
-      color: var(--text-dark);
-      animation: galaxyMove 30s ease infinite;
-      position: relative;
-      overflow: hidden;
-    }
+body.dark {
+  background: radial-gradient(circle at center, #1a1a2e, #16213e, #0f3460, #000000);
+  background-size: 600% 600%;
+  color: var(--text-dark);
+  animation: galaxyMove 30s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
 
-    @keyframes lightGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes galaxyMove {
-      0% { background-position: 0% 0%; }
-      50% { background-position: 100% 100%; }
-      100% { background-position: 0% 0%; }
-    }
 
+  @keyframes lightGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+    
     header {
       text-align: center;
       padding: 2rem 1rem 1rem;
       position: relative;
     }
+#logo {
+  width: 140px;
+  height: auto;
+  margin-bottom: 1rem;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 0px rgba(0, 0, 0, 0.0);
+}
 
-    #logo {
-      width: 140px;
-      height: auto;
-      margin-bottom: 1rem;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 0px rgba(0, 0, 0, 0);
-    }
 
-    /* دکمه‌ها و سلیکتی ها */
-    .theme-toggle, .auth-toggle, .language-select, .menu-toggle {
+
+
+
+
+
+    .theme-toggle, .auth-toggle, .language-select {
       position: absolute;
       top: 10px;
       background: #fff;
@@ -70,12 +74,7 @@
       font-size: 1rem;
       cursor: pointer;
       z-index: 1001;
-      transition: background 0.3s ease;
     }
-    .theme-toggle:hover, .auth-toggle:hover, .language-select:hover, .menu-toggle:hover {
-      background: #eee;
-    }
-
     .theme-toggle { left: 10px; }
     .auth-toggle { left: 60px; }
     .language-select {
@@ -84,12 +83,19 @@
     }
 
     .menu-toggle {
+      position: absolute;
+      top: 10px;
       right: 10px;
-      font-size: 1.5rem;
-      display: none; /* فقط موبایل نمایش داده میشه */
+      background: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 0.4rem 0.8rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 1001;
+      display: none;
     }
 
-    /* منو */
     .menu {
       position: fixed;
       top: 0;
@@ -102,7 +108,7 @@
       transition: right 0.3s ease;
       padding-top: 5rem;
       z-index: 1000;
-      display: block; /* همیشه باشه ولی کنار صفحه */
+      display: none;
     }
 
     body.dark .menu {
@@ -127,7 +133,6 @@
       background: rgba(255,255,255,0.2);
     }
 
-    /* سبد خرید */
     .cart-box {
       display: none;
       position: fixed;
@@ -139,12 +144,6 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
       z-index: 2000;
-      max-width: 90vw;
-      word-break: break-word;
-    }
-
-    .cart-box.show {
-      display: block;
     }
 
     main {
@@ -171,93 +170,38 @@
       font-size: 0.9rem;
       color: inherit;
     }
-
-    /* واکنش‌گرایی موبایل */
-    @media (max-width: 768px) {
-      .menu-toggle {
-        display: inline-block;
-      }
-
-      header {
-        padding: 1rem;
-      }
-
-      main {
-        padding: 1rem;
-        max-width: 100%;
-      }
-
-      .menu {
-        width: 100vw;
-        right: -100vw;
-        height: 100vh;
-        padding-top: 4rem;
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: none;
-      }
-
-      body.dark .menu {
-        background: rgba(0, 0, 0, 0.95);
-      }
-
-      .menu.open {
-        right: 0 !important;
-      }
-
-      .menu a {
-        font-size: 1.3rem;
-        padding: 1.5rem;
-      }
-
-      .theme-toggle, .auth-toggle, .language-select {
-        position: fixed;
-        top: 10px;
-        z-index: 1100;
-        background: #fff;
-        padding: 0.5rem;
-        font-size: 1.1rem;
-      }
-
-      .theme-toggle { left: 10px; }
-      .auth-toggle { left: 60px; }
-      .language-select { right: 60px; }
-
-      #logo {
-        width: 100px;
-        padding: 5px;
-      }
-    }
   </style>
 </head>
 <body class="light">
 
   <header>
-    <img id="logo" src="logohomecontrol.png" alt="لوگو پروژه" />
+<img id="logo" src="logohomecontrol.png" alt="لوگو پروژه" />
     <h1>خانه هوشمند با ESP32</h1>
     <p>ابتدا از طریق🔐وارد شوید</p>
-    <button class="theme-toggle" id="themeBtn" aria-label="تغییر تم">🌙</button>
-    <button class="auth-toggle" onclick="showLogin()" aria-label="ورود">🔐</button>
-    <select class="language-select" aria-label="انتخاب زبان">
+    <button class="theme-toggle" id="themeBtn">🌙</button>
+    <button class="auth-toggle" onclick="showLogin()">🔐</button>
+    <select class="language-select">
       <option value="fa">فارسی</option>
       <option value="en">English</option>
     </select>
-    <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()" aria-label="باز کردن منو">☰</button>
+    <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">☰</button>
   </header>
 
-  <nav class="menu" id="menu" aria-hidden="true">
+  <div class="menu" id="menu">
     <a href="#" onclick="openCart()">🛒 سبد خرید</a>
-    <a href="http://192.168.4.1" target="_blank" rel="noopener noreferrer">ورود به سایت</a>
+    <a href="http://192.168.4.1" target="_blank">ورود به سایت</a>
     <a href="#" onclick="loadContent('about')">اطلاعات پروژه</a>
     <a href="#" onclick="loadContent('contact')">ارتباط با ما</a>
     <a href="#" id="log-list" style="display:none" onclick="showUsers()">👁️ مشاهده کاربران</a>
-  </nav>
+  </div>
 
-  <div class="cart-box" id="cart" role="alert" aria-live="polite">
+  <div class="cart-box" id="cart">
     برای خرید به <b>ticketsuuporting@gmail.com</b> پیام دهید.
   </div>
 
   <main>
-    <div class="content-box" id="content" tabindex="0"></div>
+    <div class="content-box" id="content">
+    </div>
   </main>
 
   <footer>
@@ -293,8 +237,6 @@
       return;
     }
     menu.classList.toggle("open");
-    // تغییر aria-hidden
-    menu.setAttribute("aria-hidden", !menu.classList.contains("open"));
   }
 
   function showLogin() {
@@ -355,8 +297,6 @@
 
   function loadContent(type) {
     menu.classList.remove("open");
-    menu.setAttribute("aria-hidden", "true");
-
     if (type === 'about') {
       content.innerHTML = `<h2>درباره پروژه</h2><p>پروژه خانه هوشمند با ESP32 شامل کنترل وسایل برقی، مشاهده دما، مصرف برق و تنظیمات از طریق موبایل می‌باشد.</p>`;
     } else if (type === 'contact') {
