@@ -25,10 +25,12 @@
     }
 
 body.dark {
-  background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364, #000000);
+  background: radial-gradient(circle at center, #1a1a2e, #16213e, #0f3460, #000000);
   background-size: 600% 600%;
   color: var(--text-dark);
   animation: galaxyMove 30s ease infinite;
+  position: relative;
+  overflow: hidden;
 }
 
 
@@ -36,28 +38,9 @@ body.dark {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
-@keyframes galaxyMove {
-  0% {
-    background-position: 0% 50%;
-    filter: brightness(1);
-  }
-  25% {
-    background-position: 50% 0%;
-    filter: brightness(1.05);
-  }
-  50% {
-    background-position: 100% 50%;
-    filter: brightness(1.1);
-  }
-  75% {
-    background-position: 50% 100%;
-    filter: brightness(1.05);
-  }
-  100% {
-    background-position: 0% 50%;
-    filter: brightness(1);
-  }
+}@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
     
