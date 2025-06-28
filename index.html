@@ -280,20 +280,20 @@
     }
 
     window.onload = () => {
-      const saved = localStorage.getItem("user");
-      if (saved) {
-        const user = JSON.parse(saved);
-        userLogged = true;
-        currentUser = user;
-        document.getElementById("menu").style.display = "block";
-        menuToggle.style.display = "inline-block";
-        if (user.name.toLowerCase() === "parsa" && user.email.toLowerCase() === "parsasoorme138700@gmail.com") {
-          logList.style.display = "block";
-        } else {
-          logList.style.display = "none";
-        }
-      }
-    };
+  const saved = localStorage.getItem("user");
+  if (saved) {
+    const user = JSON.parse(saved);
+    userLogged = true;
+    currentUser = user;
+    document.getElementById("menu").style.display = "block";
+    menuToggle.style.display = "inline-block";
+    if (user.name.toLowerCase() === "parsa" && user.email.toLowerCase() === "parsasoorme138700@gmail.com") {
+      logList.style.display = "block";
+    } else {
+      logList.style.display = "none";
+    }
+  }
+};
   </script>
 </body>
 </html>
