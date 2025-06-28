@@ -240,51 +240,47 @@ body.dark {
   }
 
   function showLogin() {
-    const name = prompt("نام خود را وارد کنید:");
-    const email = prompt("ایمیل خود را وارد کنید:");
+  const name = prompt("نام خود را وارد کنید:");
+  const email = prompt("ایمیل خود را وارد کنید:");
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      alert("لطفاً یک ایمیل معتبر وارد کنید (مثال: user@example.com)");
-      return;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    alert("لطفاً یک ایمیل معتبر وارد کنید (مثال: user@example.com)");
+    return;
+  }
+
+  if (name && email) {
+    const time = new Date().toLocaleString("fa-IR");
+    const newUser = { name, email, time };
+    let users = JSON.parse(localStorage.getItem("users") || "[]");
+
+    const exists = users.some(u => u.email.toLowerCase() === email.toLowerCase() && u.name.toLowerCase() === name.toLowerCase());
+    if (!exists) {
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
     }
 
-    if (name && email) {
-      const time = new Date().toLocaleString("fa-IR");
-      const newUser = { name, email, time };
-      let users = JSON.parse(localStorage.getItem("users") || "[]");
+    localStorage.setItem("user", JSON.stringify(newUser));
+    userLogged = true;
+    currentUser = newUser;
 
-      const exists = users.some(u => u.email.toLowerCase() === email.toLowerCase() && u.name.toLowerCase() === name.toLowerCase());
-      if (!exists) {
-        users.push(newUser);
-        localStorage.setItem("users", JSON.stringify(users));
-      }
+    alert("خوش آمدی " + name);
+    menu.style.display = "block";
+    menuToggle.style.display = "inline-block";
 
-      localStorage.setItem("user", JSON.stringify(newUser));
-      userLogged = true;
-      currentUser = newUser;
+    if (isParsa(newUser)) {
+      logList.style.display = "block";
+    } else {
+      logList.style.display = "none";
+    }
 
-      alert("خوش آمدی " + name);
-      menu.style.display = "block";
-      menuToggle.style.display = "inline-block";
-
-      if (isParsa(newUser)) {
-        logList.style.display = "block";
-      } else {
-        logList.style.display = "none";
-      }
+    // اگر الان صفحه لیست کاربران باز است، آن را رفرش کن
+    if (content.innerHTML.includes("لیست کاربران وارد شده")) {
+      showUsers();
     }
   }
-if (isParsa(newUser)) {
-  logList.style.display = "block";
-} else {
-  logList.style.display = "none";
 }
 
-// اگر الان صفحه لیست کاربران باز است، آن را رفرش کن
-if (content.innerHTML.includes("لیست کاربران وارد شده")) {
-  showUsers();
-}
 
   function showUsers() {
     if (!(userLogged && isParsa(currentUser))) return;
