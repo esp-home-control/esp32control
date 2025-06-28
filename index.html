@@ -275,6 +275,16 @@ body.dark {
       }
     }
   }
+if (isParsa(newUser)) {
+  logList.style.display = "block";
+} else {
+  logList.style.display = "none";
+}
+
+// اگر الان صفحه لیست کاربران باز است، آن را رفرش کن
+if (content.innerHTML.includes("لیست کاربران وارد شده")) {
+  showUsers();
+}
 
   function showUsers() {
     if (!(userLogged && isParsa(currentUser))) return;
