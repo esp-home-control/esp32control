@@ -233,6 +233,44 @@ body.dark {
       }
       menu.classList.toggle("open");
     }
+function showLogin() {
+  const name = prompt("نام خود را وارد کنید:");
+  const email = prompt("ایمیل خود را وارد کنید:");
+
+  // بررسی ایمیل معتبر:
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    alert("لطفاً یک ایمیل معتبر وارد کنید (مثال: user@example.com)");
+    return;
+  }
+
+  if (name && email) {
+    const time = new Date().toLocaleString("fa-IR");
+    const newUser = { name, email, time };
+    let users = JSON.parse(localStorage.getItem("users") || "[]");
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("user", JSON.stringify(newUser));
+    userLogged = true;
+    currentUser = newUser;
+    alert("خوش آمدی " + name);
+    document.getElementById("menu").style.display = "block";
+    menuToggle.style.display = "inline-block";
+
+    if (name.toLowerCase() === "parsa" && email.toLowerCase() === "parsasoorme138700@gmail.com") {
+      logList.style.display = "block";
+    } else {
+      logList.style.display = "none";
+    }
+  }
+}
+function isParsa(user) {
+  return user.name?.toLowerCase() === "parsa" &&
+         user.email?.toLowerCase() === "parsasoorme138700@gmail.com";
+}
+if (isParsa(user)) {
+  logList.style.display = "block";
+}
 
     function loadContent(type) {
       menu.classList.remove("open");
@@ -290,19 +328,17 @@ body.dark {
     }
 
     window.onload = () => {
-  const saved = localStorage.getItem("user");
+  const saved = JSON.parse(localStorage.getItem("user") || "null");
   if (saved) {
-    const user = JSON.parse(saved);
     userLogged = true;
-    currentUser = user;
+    currentUser = saved;
     document.getElementById("menu").style.display = "block";
     menuToggle.style.display = "inline-block";
-    if (user.name.toLowerCase() === "parsa" && user.email.toLowerCase() === "admin") {
+    if (isParsa(saved)) {
       logList.style.display = "block";
-    } else {
-      logList.style.display = "none";
     }
   }
+};
 };
   </script>
 </body>
