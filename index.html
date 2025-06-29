@@ -245,7 +245,8 @@
   const menuToggle = document.getElementById("menuToggle");
   const productsList = document.getElementById("products-list");
   const submitOrderBtn = document.getElementById("submitOrderBtn");
-
+  const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdHF-5LTowmK2DA8xd1zNX6flZKFdvZTl9ZyKuJlDVQgw8C4A/formResponse";
+  
   let userLogged = false;
   let currentUser = null;
 
@@ -256,6 +257,24 @@
 
   const maxQuantity = 4;  // حداکثر تعداد هر محصول
   const cartState = {};   // ذخیره تعداد محصولات در سبد خرید
+  const formData = new FormData();
+formData.append("entry.1772647397", ticketId);      // شماره تیکت
+formData.append("entry.82474987", orderDetails);    // توضیحات سفارش
+formData.append("entry.1307654046", userEmail);     // ایمیل کاربر
+
+fetch(formUrl, {
+  method: "POST",
+  mode: "no-cors",
+  body: formData
+})
+.then(() => {
+  alert("سفارش شما با موفقیت ثبت شد! شماره تیکت: " + ticketId);
+  // خالی کردن سبد خرید و غیره
+})
+.catch(err => {
+  alert("خطا در ارسال سفارش");
+  console.error(err);
+});
 
   // چک کاربر پارسا
   function isParsa(user) {
