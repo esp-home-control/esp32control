@@ -406,33 +406,34 @@
     return 'TICKET-' + Math.floor(100000 + Math.random() * 900000);
   }
 
-  // ارسال ایمیل سفارش (با EmailJS)
-  function sendEmail(ticketId, orderDetails, userEmail) {
-    emailjs.send("your_service_id", "your_template_id", {
-      ticket_id: ticketId,
-      order: orderDetails,
-      user_email: userEmail
+  // ارسال سفارش به فرم گوگل
+  function sendOrderToGoogleForm(ticketId, orderDetails, userEmail) {
+    const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeQK-91wptCcxuzow08QO4VbuUTU-ro4LEnzOE7r1yRVpjNVw/formResponse";
+
+    const formData = new FormData();
+    formData.append("entry.1880205631", ticketId);
+    formData.append("entry.1076947499", orderDetails);
+    formData.append("entry.1606094311", userEmail);
+
+    fetch(formUrl, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
     })
     .then(() => {
-      alert("سفارش شما ثبت شد! شماره تیکت شما: " + ticketId);
-      // خالی کردن سبد خرید
+      alert("سفارش شما با موفقیت ثبت شد! شماره تیکت: " + ticketId);
       for (const pid in cartState) cartState[pid] = 0;
       renderProducts();
       cart.classList.remove("show");
     })
     .catch(err => {
-      alert("خطا در ارسال سفارش، دوباره تلاش کنید.");
+      alert("خطا در ارسال سفارش به فرم، دوباره تلاش کنید.");
       console.error(err);
     });
   }
 
   // کلیک ثبت سفارش
   submitOrderBtn.onclick = () => {
-    if (!userLogged || !currentUser) {
-      alert("لطفاً ابتدا وارد شوید.");
-      return;
-    }
-
     const orderItems = products
       .filter(p => cartState[p.id] > 0)
       .map(p => `${p.name} — تعداد: ${cartState[p.id]}`);
@@ -442,11 +443,16 @@
       return;
     }
 
+    if (!userLogged) {
+      alert("ابتدا وارد یا ثبت‌نام کنید");
+      return;
+    }
+
     const ticketId = generateTicket();
     const orderDetails = orderItems.join("\n");
     const userEmail = currentUser.email;
 
-    sendEmail(ticketId, orderDetails, userEmail);
+    sendOrderToGoogleForm(ticketId, orderDetails, userEmail);
   };
 
   // بارگذاری اولیه صفحه
